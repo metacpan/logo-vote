@@ -223,4 +223,11 @@ div.images {
     border-right: 8px solid #a2ae4a;
     top: -0.7em;
     position: relative;
+    text-align: center;
+}
+
+div.images img {
+    border: 1px solid #eeeeee;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, .1);
+    margin-bottom: 2em;
 }
