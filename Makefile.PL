@@ -16,6 +16,17 @@ requires 'Catalyst::Action::RenderView';
 requires 'Moose';
 requires 'namespace::autoclean';
 requires 'Config::General';
+requires 'Pithub';
+requires 'Catalyst::Plugin::Authentication';
+requires 'Template::Alloy';
+requires 'Catalyst::View::TT::Alloy';
+requires 'Catalyst::Plugin::Session';
+requires 'Catalyst::Plugin::Session::State::Cookie';
+requires 'Catalyst::Plugin::Session::Store::FastMmap';
+requires 'XML::Feed';
+requires 'MooseX::Types::URI';
+requires 'Mojo::DOM';
+requires 'Catalyst::Model::Adaptor';
 
 test_requires 'Test::More' => '0.88';
 catalyst;
