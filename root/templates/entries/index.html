@@ -1,6 +1,8 @@
 <% FOREACH entry IN entries %>
-  <h1><% entry.title %></h1>
+  <h2><% entry.title %></h2>
+  <div class="images">
   <% FOREACH image IN entry.images %>
     <img src="<% image %>"><br/>
   <% END %>
+  </div>
 <% END %>
