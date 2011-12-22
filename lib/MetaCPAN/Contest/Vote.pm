@@ -40,11 +40,48 @@ our $VERSION = '0.01';
 # local deployment.
 
 __PACKAGE__->config(
-    name => 'MetaCPAN::Contest::Vote',
+    default_view => 'HTML',
 
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
-    enable_catalyst_header                      => 1, # Send X-Catalyst header
+
+    enable_catalyst_header => 1,    # Send X-Catalyst header
+
+    github => {
+        url => {
+            access_token =>
+                'https://github.com/login/oauth/access_token?client_id=%s&client_secret=%s&code=%s',
+            authorize =>
+                'https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s',
+        },
+    },
+
+    name => 'MetaCPAN::Contest::Vote',
+
+    'Plugin::Authentication' => {
+        default_realm => 'github',
+        github        => {
+            credential => {
+                class         => 'Password',
+                password_type => 'none',
+            },
+            store => {
+                class       => 'FromSub',
+                user_type   => 'Hash',
+                model_class => 'Authentication',
+            }
+        },
+    },
+
+    'View::HTML' => {
+        AUTO_FILTER        => 'html',
+        ENCODING           => 'utf8',
+        INCLUDE_PATH       => 'root/templates/',
+        STAT_TTL           => '1',
+        TAG_STYLE          => 'asp',
+        TEMPLATE_EXTENSION => '.html',
+        WRAPPER            => 'page.html',
+    },
 );
 
 # Start the application
