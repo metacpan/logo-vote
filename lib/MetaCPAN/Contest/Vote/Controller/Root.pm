@@ -55,6 +55,49 @@ Attempt to render a view, if needed.
 sub end : ActionClass('RenderView') {
 }
 
+=head2 authentication
+
+Make sure the chain of this action if you want to restrict some
+action to a logged in user. The user will be logged in via
+Github. We also make sure that he is a contributor to the
+CPAN-API/cpan-api or the CPAN-API/metacpan-web repo.
+
+=cut
+
+sub authentication : Chained('/') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    # This may be set if the user could not be restored from the
+    # session and we made a redirect to the Github OAuth endpoint.
+    # Github will redirect back then and set the code parameter.
+    if ( my $code = $c->request->param('code') ) {
+        eval { $c->authenticate( { code => $code } ) };
+        if ($@) {
+            $c->detach( 'authentication_error', [$@] );
+        }
+        $c->response->redirect( $c->uri_for( $c->request->uri->path ) );
+    }
+
+    if ( !$c->user_exists ) {
+        $c->response->redirect( $c->uri_for_github('authorize') );
+        $c->log->debug("Redirecting to Github for authorization");
+        return;
+    }
+}
+
+=head2 authentication_error
+
+In case something goes wrong during the authentication, this action
+gets called and shows an error template.
+
+=cut
+
+sub authentication_error : Private {
+    my ( $self, $c, $error ) = @_;
+    $c->stash->{error}    = "$error";
+    $c->stash->{template} = 'authentication/error.html';
+}
+
 =head1 AUTHOR
 
 Johannes Plunien

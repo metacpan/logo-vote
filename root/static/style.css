@@ -205,3 +205,7 @@ div.images img {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, .1);
     margin-bottom: 2em;
 }
+
+div.authentication_error a, div.authentication_error a:visited {
+    color: #a2ae4a;
+}
