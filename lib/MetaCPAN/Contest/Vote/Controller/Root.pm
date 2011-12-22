@@ -23,15 +23,15 @@ MetaCPAN::Contest::Vote::Controller::Root - Root Controller for MetaCPAN::Contes
 
 =head2 index
 
-The root page (/)
+Redirect to /entries.
 
 =cut
 
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
-
-    # Hello World
-    $c->response->body( $c->welcome_message );
+    $c->response->redirect(
+        $c->uri_for_action( $c->controller('Entries')->action_for('index') )
+    );
 }
 
 =head2 default
