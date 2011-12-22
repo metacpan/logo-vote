@@ -1,6 +1,7 @@
 package MetaCPAN::Contest::Vote;
 
 use Moose;
+use Catalyst::Exception;
 use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
@@ -86,6 +87,24 @@ __PACKAGE__->config(
 
 # Start the application
 __PACKAGE__->setup();
+
+sub uri_for_github {
+    my ( $c, $type, $code ) = @_;
+    if ( $type eq 'authorize' ) {
+        return sprintf
+            $c->config->{github}{url}{$type},
+            $c->config->{github}{client_id},
+            $c->uri_for( $c->request->uri->path );
+    }
+    elsif ( $type eq 'access_token' ) {
+        return sprintf
+            $c->config->{github}{url}{$type},
+            $c->config->{github}{client_id},
+            $c->config->{github}{client_secret},
+            $code;
+    }
+    Catalyst::Exception->throw("Unknown uri type: $type");
+}
 
 =head1 NAME
 
