@@ -21,11 +21,12 @@ Catalyst Controller.
 
 =cut
 
-sub index : Path : Args(0) {
+sub index : Chained('/authentication') PathPart('vote') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->response->body(
-        'Matched MetaCPAN::Contest::Vote::Controller::Vote in Vote.');
+    use Data::Dumper;
+    $Data::Dumper::Sortkeys = 1;
+    $c->response->body( '<pre>' . Dumper( $c->user ) . '</pre>' );
 }
 
 =head1 AUTHOR
