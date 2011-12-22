@@ -105,8 +105,9 @@ sub list {
         next unless @images;
         push @result,
             {
-            title  => $entry->title,
             images => \@images,
+            link   => $entry->link,
+            title  => $entry->title,
             };
     }
     return \@result;

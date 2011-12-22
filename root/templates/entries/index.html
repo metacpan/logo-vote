@@ -1,8 +1,13 @@
 <% FOREACH entry IN entries %>
   <h2><% entry.title %></h2>
-  <div class="images">
-  <% FOREACH image IN entry.images %>
-    <img src="<% image.src %>" height="<% image.height %>" width="<% image.width %>" border="0" /><br/>
-  <% END %>
+  <div class="entry">
+    <ul>
+      <li><a href="<% entry.link %>">View Blog Post</a></li>
+    </ul>
+    <div class="images">
+      <% FOREACH image IN entry.images %>
+        <img src="<% image.src %>" height="<% image.height %>" width="<% image.width %>" border="0" /><br/>
+      <% END %>
+    </div>
   </div>
 <% END %>

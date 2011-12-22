@@ -147,48 +147,8 @@ p:nth-of-type(1) {
     border-bottom: 1px dotted #424951;
 }
 
-ul:nth-of-type(1) {
-    list-style-type: none;
-    line-height: 32px;
-    padding-left: 0;
-}
-
-ul:nth-of-type(1) li:before {
-    font-weight: bold;
-    content: "[ ] ";
-    letter-spacing: 4px;
-}
-
-ul:nth-of-type(1) li:hover:before {
-    font-weight: bold;
-    content: "[x] ";
-    letter-spacing: 3px;
-}
-
-ul {
-    list-style-type: square;
-    padding-left: 1em;
-    line-height: 1.8em;
-}
-
 p {
     line-height: 1.6em;
-}
-
-
-
-a:link {
-    color: #b9cbe1;
-}
-
-a:visited {
-    color: #e3bad5;
-}
-
-/*fix: android not using full width*/
-p, ul, ol, ul, li {
-    max-width:100%;
-    background: #424951;
 }
 
 @media all and (max-width: 720px) {
@@ -210,9 +170,8 @@ p, ul, ol, ul, li {
     }
 }
 
-div.images {
+div.entry {
     background: #ffffff;
-    padding: 40px 40px 10px;
     margin-bottom: 2.5em;
     -webkit-border-radius: 0 0 20px 20px;
     -moz-border-radius: 0 0 20px 20px;
@@ -223,6 +182,21 @@ div.images {
     border-right: 8px solid #a2ae4a;
     top: -0.7em;
     position: relative;
+}
+
+div.entry ul {
+    background-color: #dddddd;
+    list-style-type: none;
+    padding-left: 1em;
+    line-height: 1.8em;
+}
+
+div.entry ul li {
+    display: inline;
+    padding-right: 1em;
+}
+
+div.images {
     text-align: center;
 }
 
