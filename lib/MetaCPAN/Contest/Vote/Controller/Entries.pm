@@ -23,9 +23,7 @@ Catalyst Controller.
 
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
-
-    $c->response->body(
-        'Matched MetaCPAN::Contest::Vote::Controller::Entries in Entries.');
+    $c->stash->{entries} = $c->model('Entries')->list;
 }
 
 =head1 AUTHOR
