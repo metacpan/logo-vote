@@ -2,7 +2,7 @@
   <h2><% entry.title %></h2>
   <div class="images">
   <% FOREACH image IN entry.images %>
-    <img src="<% image %>"><br/>
+    <img src="<% image.src %>" height="<% image.height %>" width="<% image.width %>" border="0" /><br/>
   <% END %>
   </div>
 <% END %>

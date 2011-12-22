@@ -45,22 +45,42 @@ Fetches the RSS feed, parses the description field for img tags. It
 returns an arrayref of hashrefs containing a list of image URLs as
 well as the title of the blog post.
 
-    $VAR1 = [
+    [
         {   'images' => [
-                'http://4.bp.blogspot.com/-PziLcYtp3Fw/TvHpoZLbRgI/AAAAAAAAAHQ/ErAM6rEThG8/s400/au-icon-small.png',
-                'http://4.bp.blogspot.com/-JjWg5DKfnqY/TvHpogPS3oI/AAAAAAAAAHc/HhQfw7IxZC4/s400/au-icon.png',
-                'http://1.bp.blogspot.com/-aWUfuJ2S4Lg/TvHpo4b2r5I/AAAAAAAAAHo/ZmQogctdJGw/s400/metaCPANprotocol.png'
+                {   'height' => '16',
+                    'src' =>
+                        'http://4.bp.blogspot.com/-PziLcYtp3Fw/TvHpoZLbRgI/AAAAAAAAAHQ/ErAM6rEThG8/s400/au-icon-small.png',
+                    'width' => 16
+                },
+                {   'height' => '300',
+                    'src' =>
+                        'http://4.bp.blogspot.com/-JjWg5DKfnqY/TvHpogPS3oI/AAAAAAAAAHc/HhQfw7IxZC4/s400/au-icon.png',
+                    'width' => 300
+                },
+                {   'height' => '149',
+                    'src' =>
+                        'http://1.bp.blogspot.com/-aWUfuJ2S4Lg/TvHpo4b2r5I/AAAAAAAAAHo/ZmQogctdJGw/s400/metaCPANprotocol.png',
+                    'width' => 300
+                }
             ],
             'title' => 'Audrey Tang - The meta->CPAN protocol'
         },
         {   'images' => [
-                'http://1.bp.blogspot.com/-AtBjwgh-IDY/TvDs6tZIXEI/AAAAAAAAAG4/oRZCT11A3P0/s400/barry.arthur%2540gmail.com-horus_eye_of_cpan_version_3-111220.png',
-                'http://2.bp.blogspot.com/-YKrSEUANo9c/TvDtHg6JdFI/AAAAAAAAAHE/ois81zHFp7M/s400/barry.png'
+                {   'height' => '16',
+                    'src' =>
+                        'http://1.bp.blogspot.com/-AtBjwgh-IDY/TvDs6tZIXEI/AAAAAAAAAG4/oRZCT11A3P0/s400/barry.arthur%2540gmail.com-horus_eye_of_cpan_version_3-111220.png',
+                    'width' => 16
+                },
+                {   'height' => '350',
+                    'src' =>
+                        'http://2.bp.blogspot.com/-YKrSEUANo9c/TvDtHg6JdFI/AAAAAAAAAHE/ois81zHFp7M/s400/barry.png',
+                    'width' => 350
+                }
             ],
             'title' => 'Barry Arthur - Horus Eye of CPAN'
         },
         ...
-    ];
+    ]
 
 =cut
 
@@ -74,14 +94,20 @@ sub list {
             sub {
                 my ($img) = @_;
                 return if $img->{width} == 1 && $img->{height} == 1;
-                push @images, $img->{src};
+                push @images,
+                    {
+                    height => $img->{height},
+                    src    => $img->{src},
+                    width  => $img->{width},
+                    };
             }
         );
         next unless @images;
-        push @result, {
-            title => $entry->title,
+        push @result,
+            {
+            title  => $entry->title,
             images => \@images,
-        };
+            };
     }
     return \@result;
 }
