@@ -64,7 +64,7 @@ well as the title of the blog post.
 
 =cut
 
-sub images {
+sub list {
     my ($self) = @_;
     my @result;
     foreach my $entry ( $self->entries ) {
@@ -83,7 +83,7 @@ sub images {
             images => \@images,
         };
     }
-    return @result;
+    return \@result;
 }
 
 __PACKAGE__->meta->make_immutable;
