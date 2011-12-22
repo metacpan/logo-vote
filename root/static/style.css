@@ -97,7 +97,7 @@ h1:after {
 
 h2 {
     margin-left: -43px;
-    font-size: 1.8em;
+    font-size: 1.5em;
     color: #424951;
     position: relative;
     bottom: -.4em;
@@ -172,7 +172,6 @@ p {
 
 div.entry {
     background: #ffffff;
-    margin-bottom: 2.5em;
     -webkit-border-radius: 0 0 20px 20px;
     -moz-border-radius: 0 0 20px 20px;
     -o-border-radius: 0 0 20px 20px;
@@ -204,6 +203,7 @@ div.images img {
     border: 1px solid #eeeeee;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, .1);
     margin-bottom: 2em;
+    margin-right: 2em;
 }
 
 div.authentication_error a, div.authentication_error a:visited {
