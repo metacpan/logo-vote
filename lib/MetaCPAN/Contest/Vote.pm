@@ -20,6 +20,10 @@ use Catalyst::Runtime 5.80;
 use Catalyst qw/
     ConfigLoader
     Static::Simple
+    Authentication
+    Session
+    Session::Store::FastMmap
+    Session::State::Cookie
     /;
 
 extends 'Catalyst';
