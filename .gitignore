@@ -1,5 +1,5 @@
 .DS_Store
 /var/tmp
-metacpan_web_local.conf
 .includepath
 .project
+metacpan_contest_vote_local.conf
