@@ -14,7 +14,9 @@ Callback URL: http://localhost:3000`
 Add to `metacpan_contest_vote_local.conf` the values you got
 from Github while registering the application:
 
-`<github>
+```text
+<github>
     client_id c0ff33
     client_secret m0r3c0ff33
-</github>`
+</github>
+```
