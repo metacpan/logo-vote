@@ -103,8 +103,8 @@ h2 {
     bottom: -.4em;
     background: #a2ae4a;
     padding: 5px;
-    display: inline;
-    line-height: 2em;
+    display: block;
+    line-height: 1.2em;
     border-top: 1px solid #b1bb60;
     /*white-space:nowrap;*/
     -webkit-border-radius: 0 2px 2px 0;
@@ -208,4 +208,19 @@ p, ul, ol, ul, li {
     h1:after {
         display: none;
     }
+}
+
+div.images {
+    background: #ffffff;
+    padding: 40px 40px 10px;
+    margin-bottom: 2.5em;
+    -webkit-border-radius: 0 0 20px 20px;
+    -moz-border-radius: 0 0 20px 20px;
+    -o-border-radius: 0 0 20px 20px;
+    border-radius: 0 0 20px 20px;
+    border-bottom: 8px solid #a2ae4a;
+    border-left: 8px solid #a2ae4a;
+    border-right: 8px solid #a2ae4a;
+    top: -0.7em;
+    position: relative;
 }
