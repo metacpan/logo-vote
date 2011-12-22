@@ -6,8 +6,10 @@ https://github.com/account/applications/new
 
 For developing locally, you set something like:
 
-`URL: http://localhost:3000
-Callback URL: http://localhost:3000`
+```text
+URL:            http://localhost:3000
+Callback URL:   http://localhost:3000
+```
 
 ## Set up config
 
