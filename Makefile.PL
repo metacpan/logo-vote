@@ -28,6 +28,7 @@ requires 'MooseX::Types::URI';
 requires 'Mojo::DOM';
 requires 'Catalyst::Model::Adaptor';
 requires 'Catalyst::Authentication::Store::FromSub';
+requires 'LWP::UserAgent';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

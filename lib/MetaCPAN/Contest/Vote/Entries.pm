@@ -2,6 +2,8 @@ package MetaCPAN::Contest::Vote::Entries;
 
 use Moose;
 use MooseX::Types::URI qw(Uri);
+use HTTP::Request;
+use LWP::UserAgent;
 use Mojo::DOM;
 use URI;
 use XML::Feed;
@@ -28,20 +30,59 @@ has 'feed_url' => (
     isa => Uri,
 );
 
+has 'last_modified' => (
+    is        => 'ro',
+    isa       => 'Str',
+    predicate => 'has_last_modified',
+);
+
+has 'ua' => (
+    is         => 'ro',
+    isa        => 'LWP::UserAgent',
+    lazy_build => 1,
+);
+
 =head1 METHODS
 
 =cut
 
 sub _build_feed {
     my ($self) = @_;
-    my $feed = XML::Feed->parse( $self->feed_url )
-        or die XML::Feed->errstr;
+    my $rss = $self->fetch_feed;
+    my $feed = XML::Feed->parse( \$rss ) or die XML::Feed->errstr;
     return $feed;
+}
+
+sub _build_ua {
+    my ($self) = @_;
+    return LWP::UserAgent->new;
+}
+
+=head2 fetch_feed
+
+Fetches the feed from C<feed_url>, using the HTTP headers
+Last-Modified and If-Modified-Since (mst++). Returns undef
+if the RSS feed was not modified. It also handles setting
+the C<last_modified> attribute.
+
+=cut
+
+sub fetch_feed {
+    my ($self) = @_;
+    my $request = HTTP::Request->new( GET => $self->feed_url );
+    if ( $self->has_last_modified ) {
+        $request->header( 'If-Modified-Since' => $self->last_modified );
+    }
+    my $response = $self->ua->request($request);
+    if ( $response->is_success ) {
+        $self->{last_modified} = $response->header('Last-Modified');
+        return $response->decoded_content;
+    }
 }
 
 =head2 images
 
-Fetches the RSS feed, parses the description field for img tags. It
+Reads the RSS feed and parses the description field for img tags. It
 returns an arrayref of hashrefs containing a list of image URLs as
 well as the title of the blog post.
 
@@ -86,6 +127,7 @@ well as the title of the blog post.
 
 sub list {
     my ($self) = @_;
+    $self->refresh;
     my @result;
     foreach my $entry ( $self->entries ) {
         my $dom = Mojo::DOM->new( $entry->content->body );
@@ -111,6 +153,19 @@ sub list {
             };
     }
     return \@result;
+}
+
+=head2 refresh
+
+Refresh the data from the RSS feed.
+
+=cut
+
+sub refresh {
+    my ($self) = @_;
+    if ( my $rss = $self->fetch_feed ) {
+        $self->{feed} = XML::Feed->parse( \$rss ) or die XML::Feed->errstr;
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
