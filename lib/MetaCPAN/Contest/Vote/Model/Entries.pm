@@ -2,7 +2,7 @@ package MetaCPAN::Contest::Vote::Model::Entries;
 
 use strict;
 use warnings;
-use base qw(Catalyst::Model::Adaptor);
+use base qw(Catalyst::Model::Factory::PerRequest);
 
 __PACKAGE__->config( class => 'MetaCPAN::Contest::Vote::Entries' );
 
