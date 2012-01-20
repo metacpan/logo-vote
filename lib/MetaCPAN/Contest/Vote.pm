@@ -25,6 +25,7 @@ use Catalyst qw/
     Session
     Session::Store::FastMmap
     Session::State::Cookie
+    Params::Nested
     /;
 
 extends 'Catalyst';

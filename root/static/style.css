@@ -209,3 +209,70 @@ div.images img {
 div.authentication_error a, div.authentication_error a:visited {
     color: #a2ae4a;
 }
+
+.votepoll {
+    padding: 20px;
+}
+
+.votepoll h2 {
+    margin-left: 0;
+    border:none;
+}
+
+.vote-entry {
+    padding: 10px 0 10px 0;
+}
+
+.rules {
+    padding: 20px;
+    margin: -10px 0 0 0;
+    color: #424951;
+    border: 1px solid #eeeeee;
+    box-shadow: 1px 1px rgba(0, 0, 0, .1);
+}
+
+.rules p {
+    text-shadow: 0 3px 2px rgba(0, 0, 0, .15);
+    margin: none;
+    padding: none;
+    text-align: left;
+    background: none;
+    background-color:none;
+    border-bottom: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -o-box-shadow: none;
+    box-shadow: none;
+    text-shadow: 0 3px 2px rgba(0, 0, 0, .15);
+}
+
+.vote-entry input[type="text"] {
+    font-family: 'Arvo';
+    font-size:1em;
+    padding: 2px;
+    text-align:center;
+    width: 40px;
+    height: 40px;
+    color: #c80000;
+}
+
+.vote-entry label {
+    padding-left: 15px;
+    color: #424951;
+    font-family: 'Arvo';
+    font-size:1.5em;
+}
+
+#vote input[type="submit"] {
+    font-family: 'Arvo';
+    font-size:1.2em;
+    background: #A2AE4A;
+    color: #424951;
+    padding: 12px 0 12px 0;
+    width: 100%;
+    cursor:pointer;cursor:hand
+}
+
+#vote input[type="submit"]:hover {
+    background: #B1BB60;
+}
