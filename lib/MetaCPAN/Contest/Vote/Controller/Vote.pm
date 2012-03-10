@@ -60,7 +60,12 @@ sub index : Chained('/authentication') PathPart('vote') Args(0) {
         $self->reject($c, $_);
     };
 
-    $c->response->body('foo');
+    $c->response->redirect(
+        $c->uri_for( $self->action_for('submitted') ),
+    );
+}
+
+sub submitted : Chained('/authentication') PathPart('submitted') Args(0) {
 }
 
 sub voting_failure : Action {
