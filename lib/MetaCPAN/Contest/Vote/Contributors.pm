@@ -82,11 +82,13 @@ hashrefs look like:
     [{
       'email' => 'plu@pqpq.de',
       'name' => 'Johannes Plunien',
+      'id' => '31597',
       'login' => 'plu'
     },
     {
       'email' => undef,
       'name' => undef,
+      'id' => '144096',
       'login' => 'reneeb'
     }]
 
@@ -107,8 +109,9 @@ sub fetch {
         while ( my $contributor = $contributors_rs->next ) {
             my $user_rs = $self->_user( user => $contributor->{login} );
             my $user = $user_rs->content;
-            $result{ $user->{login} } ||= {
+            $result{ $user->{id} } ||= {
                 email => $user->{email},
+                id    => $user->{id},
                 login => $user->{login},
                 name  => $user->{name},
             };
