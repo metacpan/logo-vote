@@ -122,6 +122,7 @@ h2:before {
     content: "";
     position: absolute;
     display: block;
+    top: 0px;
     bottom: -3px;
     border: .8em solid #747c34;
     z-index: -1;
@@ -298,4 +299,15 @@ div.authentication_error a, div.authentication_error a:visited {
 
 #vote input[type="submit"]:hover {
     background: #B1BB60;
+}
+
+.title-vote {
+    float: right;
+    font-family: 'Arvo';
+    font-size:1em;
+    padding: 2px;
+    text-align:center;
+    width: 30px;
+    height: 30px;
+    color: #c80000;
 }

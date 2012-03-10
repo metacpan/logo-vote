@@ -32,7 +32,13 @@
 </div>
 
 <% FOREACH entry IN entries %>
-  <h2><% entry.title %></h2>
+<% SET id = loop.index %>
+  <h2>
+    <input type="text" class="title-vote" id="not-vote-entry-<% id %>"
+           name="not-votes.<% id %>.score" value="" />
+    <% entry.title %>
+    <div style="clear: both"></div>
+  </h2>
   <div class="entry">
     <ul>
       <li><a href="<% entry.link %>">View Blog Post</a></li>
