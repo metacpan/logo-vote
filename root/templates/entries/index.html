@@ -12,14 +12,15 @@
   </div>
 <% END %>
 
-<% IF c.user_exists %>
 <h2>Vote for your favorites!</h2>
   <div class="entry votepoll">
     <h2>Voting rules</h2>
     <div class="rules">
+      <% IF c.user_exists %><p>Log in</p><% END %>
       <p>FIXME:</p>
     </div>
 
+<% IF c.user_exists %>
     <h2>Entries</h2>
     <form method="post" action="<% c.uri_for('/vote/') %>" id="vote">
       <% FOREACH entry IN entries %>
@@ -32,7 +33,7 @@
       </div>
       <% END %>
 
-      <input type="submit" value="Vote" /> 
+      <input type="submit" value="Vote" />
     </form>
-  </div>
 <% END %>
+  </div>
