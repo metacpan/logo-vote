@@ -137,7 +137,7 @@ h2:before {
     color: green;
 }
 
-#rules-list {
+.rules-list {
     font-size: 1.2em;
     line-height: 1.6em;
 }

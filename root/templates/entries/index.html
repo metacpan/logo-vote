@@ -11,9 +11,9 @@
 
   <h2>How to Vote</h2>
   <div class="rules">
-    <ul id="rules-list">
+    <ul class="rules-list">
       <li>
-        Be a MetaCPAN contributor before $cutoff_date
+        Be a MetaCPAN contributor
         <% IF c.user_exists %><span class="mark">&#x2713;</span><% END %>
       </li>
       <li>
@@ -43,7 +43,21 @@
 
   <h2>Voting Rules</h2>
   <div class="rules">
-    <p>TODO</p>
+    <ul class="rules-list">
+      <li>The voting period is open as of now, Sunday the 12th, March 2012</li>
+      <li>The voting period closes on Sunday the 18th of March 2012, 23:00:00
+      UTC</li>
+      <li>Every MetaCPAN contributor that has made his first contribution before
+      Sunday the 12th of March 2012, 00:00:00 UTC, is eligible for voting</li>
+      <li>A contributor to MetaCPAN is everyone with at least one commit in
+      either the <a href="https://github.com/cpan-api/cpan-api">CPAN-API</a> or
+      the <a href="https://github.com/cpan-api/metacpan-web">MetaCPAN-Web</a>
+      git repository</li>
+      <li>Every contributor gets exactly one vote</li>
+      <li>The winner of the vote is determined using
+      the <a href="http://en.wikipedia.org/wiki/Schulze_method">Schulze
+      Method</a></li>
+    </ul>
   </div>
 
 </div>
