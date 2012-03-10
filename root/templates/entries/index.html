@@ -118,6 +118,7 @@ $(function () {
       <div class="vote-entry">
         <input type="hidden" name="votes.<% id %>.title" value="<% entry.title %>" />
         <input type="hidden" name="votes.<% id %>.name" value="<% entry.link %>" />
+        <input type="hidden" name="votes.<% id %>.id" value="<% id %>" />
         <input type="text" class="vote" id="votes.<% id %>.score" name="votes.<% id %>.score" value="" />
         <label for="votes.<% id %>.score"><% entry.title %></label>
       </div>
