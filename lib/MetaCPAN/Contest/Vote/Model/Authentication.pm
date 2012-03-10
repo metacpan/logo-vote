@@ -28,9 +28,7 @@ has contributors => (
 
 after BUILD => sub {
     my ($self) = @_;
-    use Data::Dump 'pp';
-    pp $self->contributors;
-    ();
+    $self->contributors;
 };
 
 sub _build_contributors {

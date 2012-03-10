@@ -33,6 +33,11 @@ requires 'Catalyst::Plugin::Params::Nested';
 requires 'JSON';
 requires 'MooseX::Types::Path::Class';
 requires 'File::Slurp';
+requires 'Params::Classify';
+requires 'MooseX::Types';
+requires 'MooseX::Types::Moose';
+requires 'MooseX::Types::Structured';
+requires 'MooseX::Types::Common::Numeric';
 
 test_requires 'Test::More' => '0.88';
 catalyst;
