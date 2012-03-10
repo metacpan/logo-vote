@@ -31,10 +31,30 @@
 
 </div>
 
+<script type="text/javascript">
+$(function () {
+  $('input.title-vote, input.vote').change(function () {
+    var match = $(this).attr('name').match(/^([\w-]+)[.](\d+)[.]score$/);
+    if (!match) { return false; }
+
+    switch(match[1]) {
+      case "votes":
+        $("#not-votes\\." + match[2] + "\\.score").val( $(this).val() );
+        break;
+      case "not-votes":
+        $("#votes\\." + match[2] + "\\.score").val( $(this).val() );
+        break;
+    }
+
+    return true;
+  });
+});
+</script>
+
 <% FOREACH entry IN entries %>
 <% SET id = loop.index %>
   <h2>
-    <input type="text" class="title-vote" id="not-vote-entry-<% id %>"
+    <input type="text" class="title-vote" id="not-votes.<% id %>.score"
            name="not-votes.<% id %>.score" value="" />
     <% entry.title %>
     <div style="clear: both"></div>
@@ -61,8 +81,8 @@
       <div class="vote-entry">
         <input type="hidden" name="votes.<% id %>.title" value="<% entry.title %>" />
         <input type="hidden" name="votes.<% id %>.name" value="<% entry.link %>" />
-        <input type="text" id="vote-entry-<% id %>" name="votes.<% id %>.score" value="" />
-        <label for="vote-entry-<% id %>"><% entry.title %></label>
+        <input type="text" class="vote" id="votes.<% id %>.score" name="votes.<% id %>.score" value="" />
+        <label for="votes.<% id %>.score"><% entry.title %></label>
       </div>
       <% END %>
 
