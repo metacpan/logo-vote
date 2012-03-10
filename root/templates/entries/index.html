@@ -57,8 +57,10 @@ $(function () {
 <% FOREACH entry IN entries %>
 <% SET id = loop.index %>
   <h2>
+    <% IF c.user_exists %>
     <input type="text" class="title-vote" id="not-votes.<% id %>.score"
            name="not-votes.<% id %>.score" value="" />
+    <% END %>
     <% entry.title %>
     <div style="clear: both"></div>
   </h2>
@@ -74,10 +76,10 @@ $(function () {
   </div>
 <% END %>
 
+<% IF c.user_exists %>
 <h2>Cast your vote!</h2>
   <div class="entry votepoll">
 
-<% IF c.user_exists %>
     <form method="post" action="<% c.uri_for('/vote/') %>" id="vote">
       <% FOREACH entry IN entries %>
       <% SET id = loop.index %>
@@ -91,5 +93,5 @@ $(function () {
 
       <input type="submit" value="Vote" />
     </form>
-<% END %>
   </div>
+<% END %>
