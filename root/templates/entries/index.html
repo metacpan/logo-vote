@@ -16,8 +16,17 @@
   <div class="entry votepoll">
     <h2>Voting rules</h2>
     <div class="rules">
-      <% IF !c.user_exists %><p><a href="<% c.uri_for('/login') %>">Log in</a></p><% END %>
-      <p>FIXME:</p>
+      <ul>
+        <li>
+          Be a MetaCPAN contributor before $cutoff_date
+          <% IF c.user_exists %><span class="mark">&#x2713;</span><% END %>
+        </li>
+        <li>
+          <a href="<% c.uri_for('/login') %>">Log in</a>
+          <% IF c.user_exists %><span class="mark">&#x2713;</span><% END %>
+        </li>
+        <li>FIXME</li>
+      </ul>
     </div>
 
 <% IF c.user_exists %>
