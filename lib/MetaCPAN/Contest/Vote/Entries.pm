@@ -152,7 +152,7 @@ sub list {
             title => $entry->title,
             };
     }
-    return \@result;
+    return [reverse @result];
 }
 
 =head2 refresh
