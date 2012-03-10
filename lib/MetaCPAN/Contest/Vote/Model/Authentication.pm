@@ -1,9 +1,49 @@
 package MetaCPAN::Contest::Vote::Model::Authentication;
 
-use strict;
-use warnings;
+use Moose;
+use JSON;
 use Catalyst::Exception;
-use base qw(Catalyst::Model);
+use MooseX::Types::Path::Class 'File';
+use namespace::autoclean;
+
+extends 'Catalyst::Model';
+
+has contributors_file => (
+    is       => 'ro',
+    isa      => File,
+    coerce   => 1,
+    required => 1,
+);
+
+has contributors => (
+    traits  => ['Hash'],
+    is      => 'ro',
+    isa     => 'HashRef[HashRef]', # keyed by numeric github id
+    lazy    => 1,
+    builder => '_build_contributors',
+    handles => {
+        _has_contributor => 'exists',
+    },
+);
+
+after BUILD => sub {
+    my ($self) = @_;
+    use Data::Dump 'pp';
+    pp $self->contributors;
+    ();
+};
+
+sub _build_contributors {
+    my ($self) = @_;
+
+    my @contributors_list = @{ decode_json $self->contributors_file->slurp };
+
+    return {
+        map {
+            ($_->{id} => $_)
+        } @contributors_list,
+    };
+}
 
 sub auth {
     my ( $self, $c, $userinfo ) = @_;
@@ -61,16 +101,7 @@ sub get_user {
 
 sub is_contributor {
     my ( $self, $c, $user ) = @_;
-    foreach my $repo (qw(metacpan-web cpan-api)) {
-        my $result = $c->model('Pithub')->repos->contributors(
-            user => 'CPAN-API',
-            repo => $repo,
-        );
-        while ( my $row = $result->next ) {
-            return 1 if $row->{login} eq $user->{login};
-        }
-    }
-    return 0;
+    return $self->_has_contributor($user->{id});
 }
 
 =head1 NAME

@@ -58,6 +58,10 @@ __PACKAGE__->config(
         },
     },
 
+    'Model::Authentication' => {
+        contributors_file => 'data/contributors.json',
+    },
+
     name => 'MetaCPAN::Contest::Vote',
 
     'Plugin::Authentication' => {
