@@ -135,7 +135,8 @@ sub list {
         $dom->find('img')->each(
             sub {
                 my ($img) = @_;
-                return if $img->{width} == 1 && $img->{height} == 1;
+                return if exists $img->{width}  && $img->{width}  == 1
+                       && exists $img->{height} && $img->{height} == 1;
                 push @images,
                     {
                     height => $img->{height},
