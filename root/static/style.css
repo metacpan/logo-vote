@@ -132,7 +132,15 @@ h2:before {
     border-radius: 2px 0 0 2px;
 }
 
-p:nth-of-type(1) {
+.help li {
+    font-family: 'Bitter', serif;
+    text-shadow: 0 3px 2px rgba(0, 0, 0, .15);
+    font-size: 1.2em;
+    margin-left: 20px;
+    padding-left: 5px;
+}
+
+p {
     font-family: 'Bitter', serif;
     -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .15);
     -moz-box-shadow: 0 0 20px rgba(0, 0, 0, .15);
@@ -214,13 +222,28 @@ div.authentication_error a, div.authentication_error a:visited {
     padding: 20px;
 }
 
-.votepoll h2 {
+.votepoll h2, .help h2 {
     margin-left: 0;
     border:none;
 }
 
 .vote-entry {
     padding: 10px 0 10px 0;
+}
+
+.help {
+    padding: 20px;
+    color: #424951;
+    background: #ffffff;
+    -webkit-border-radius: 0 0 20px 20px;
+    -moz-border-radius: 0 0 20px 20px;
+    -o-border-radius: 0 0 20px 20px;
+    border-radius: 0 0 20px 20px;
+    border-bottom: 8px solid #a2ae4a;
+    border-left: 8px solid #a2ae4a;
+    border-right: 8px solid #a2ae4a;
+    top: -0.7em;
+    position: relative;
 }
 
 .rules {
@@ -231,7 +254,7 @@ div.authentication_error a, div.authentication_error a:visited {
     box-shadow: 1px 1px rgba(0, 0, 0, .1);
 }
 
-.rules p {
+.rules p, .help p {
     text-shadow: 0 3px 2px rgba(0, 0, 0, .15);
     margin: none;
     padding: none;

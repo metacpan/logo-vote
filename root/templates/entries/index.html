@@ -1,3 +1,36 @@
+<h2>Vote for your favorites!</h2>
+<div class="help">
+
+  <p>This is the voting system for the MetaCPAN Logo Contest. To find out more
+  about the contest, visit it's <a href="http://contest.metacpan.org">main
+  page</a>. All Logo submissions we received are summariesed on this page, but
+  also available with more details on our
+  <a href="http://entries.contest.metacpan.org/">Logo Entries Blog</a>.</p>
+
+  <p>If you're here to cast your vote, please read on.</p>
+
+  <h2>How to Vote</h2>
+  <div class="rules">
+    <ul>
+      <li>
+        Be a MetaCPAN contributor before $cutoff_date
+        <% IF c.user_exists %><span class="mark">&#x2713;</span><% END %>
+      </li>
+      <li>
+        <a href="<% c.uri_for('/login') %>">Log in</a>
+        <% IF c.user_exists %><span class="mark">&#x2713;</span><% END %>
+      </li>
+      <li>xxx</li>
+    </ul>
+  </div>
+
+  <h2>Voting Rules</h2>
+  <div class="rules">
+    <p>TODO</p>
+  </div>
+
+</div>
+
 <% FOREACH entry IN entries %>
   <h2><% entry.title %></h2>
   <div class="entry">
@@ -12,25 +45,10 @@
   </div>
 <% END %>
 
-<h2>Vote for your favorites!</h2>
+<h2>Cast your vote!</h2>
   <div class="entry votepoll">
-    <h2>Voting rules</h2>
-    <div class="rules">
-      <ul>
-        <li>
-          Be a MetaCPAN contributor before $cutoff_date
-          <% IF c.user_exists %><span class="mark">&#x2713;</span><% END %>
-        </li>
-        <li>
-          <a href="<% c.uri_for('/login') %>">Log in</a>
-          <% IF c.user_exists %><span class="mark">&#x2713;</span><% END %>
-        </li>
-        <li>FIXME</li>
-      </ul>
-    </div>
 
 <% IF c.user_exists %>
-    <h2>Entries</h2>
     <form method="post" action="<% c.uri_for('/vote/') %>" id="vote">
       <% FOREACH entry IN entries %>
       <% SET id = loop.index %>
