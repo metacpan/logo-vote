@@ -85,6 +85,13 @@ sub authentication : Chained('/') PathPart('') CaptureArgs(0) {
     }
 }
 
+sub login : Chained('/authentication') Args(0) {
+    my ($self, $ctx) = @_;
+
+    $ctx->response->redirect( $ctx->uri_for('/') )
+        if $ctx->user_exists;
+}
+
 =head2 authentication_error
 
 In case something goes wrong during the authentication, this action
