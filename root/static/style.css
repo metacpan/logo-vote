@@ -275,7 +275,7 @@ div.authentication_error a, div.authentication_error a:visited {
     font-size:1em;
     padding: 2px;
     text-align:center;
-    width: 40px;
+    width: 50px;
     height: 40px;
     color: #c80000;
 }
@@ -307,7 +307,7 @@ div.authentication_error a, div.authentication_error a:visited {
     font-size:1em;
     padding: 2px;
     text-align:center;
-    width: 30px;
+    width: 50px;
     height: 30px;
     color: #c80000;
 }
