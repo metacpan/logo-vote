@@ -127,7 +127,6 @@ well as the title of the blog post.
 
 sub list {
     my ($self) = @_;
-    $self->refresh;
     my @result;
     foreach my $entry ( $self->entries ) {
         my $dom = Mojo::DOM->new( $entry->content->body );
