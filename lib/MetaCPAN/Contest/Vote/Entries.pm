@@ -25,7 +25,7 @@ has 'feed' => (
 has 'feed_url' => (
     coerce => 1,
     default =>
-        'http://entries.contest.metacpan.org/feeds/posts/default?alt=rss',
+        'http://entries.contest.metacpan.org/feeds/posts/default?alt=rss&max-results=500',
     is  => 'ro',
     isa => Uri,
 );
