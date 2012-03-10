@@ -16,7 +16,7 @@
   <div class="entry votepoll">
     <h2>Voting rules</h2>
     <div class="rules">
-      <% IF !c.user_exists %><p>Log in</p><% END %>
+      <% IF !c.user_exists %><p><a href="<% c.uri_for('/login') %>">Log in</a></p><% END %>
       <p>FIXME:</p>
     </div>
 
