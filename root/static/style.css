@@ -272,7 +272,7 @@ div.authentication_error a, div.authentication_error a:visited {
 
 .vote-entry input[type="text"] {
     font-family: 'Arvo';
-    font-size:1em;
+    font-size:1.5em;
     padding: 2px;
     text-align:center;
     width: 50px;
@@ -289,7 +289,7 @@ div.authentication_error a, div.authentication_error a:visited {
 
 #vote input[type="submit"] {
     font-family: 'Arvo';
-    font-size:1.2em;
+    font-size:1em;
     background: #A2AE4A;
     color: #424951;
     padding: 12px 0 12px 0;
