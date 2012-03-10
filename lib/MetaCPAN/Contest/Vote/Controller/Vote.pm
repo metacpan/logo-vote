@@ -1,11 +1,19 @@
 package MetaCPAN::Contest::Vote::Controller::Vote;
 
 use Moose;
+use Try::Tiny;
 use Params::Classify 'is_ref', 'ref_type';
 use MetaCPAN::Contest::Vote::Types 'Ballot';
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller'; }
+
+has vote_storage => (
+    is       => 'ro',
+    required => 1,
+    isa      => 'MetaCPAN::Contest::Vote::Votes',
+    handles  => ['submit_ballot'],
+);
 
 =head1 NAME
 
@@ -45,9 +53,14 @@ sub index : Chained('/authentication') PathPart('vote') Args(0) {
     $self->reject($c, 'malformed ballot: ' . $validation_error)
         if defined $validation_error;
 
-    use Data::Dumper;
-    $Data::Dumper::Sortkeys = 1;
-    $c->response->body( '<pre>' . Dumper( $c->request->params->{votes} ) . '</pre>' );
+    try {
+        $self->submit_ballot($c->user->{github_user} => $votes);
+    }
+    catch {
+        $self->reject($c, $_);
+    };
+
+    $c->response->body('foo');
 }
 
 sub voting_failure : Action {

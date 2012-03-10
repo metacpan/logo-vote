@@ -38,6 +38,7 @@ requires 'MooseX::Types';
 requires 'MooseX::Types::Moose';
 requires 'MooseX::Types::Structured';
 requires 'MooseX::Types::Common::Numeric';
+requires 'aliased';
 
 test_requires 'Test::More' => '0.88';
 catalyst;

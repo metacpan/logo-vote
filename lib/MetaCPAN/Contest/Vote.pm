@@ -2,6 +2,7 @@ package MetaCPAN::Contest::Vote;
 
 use Moose;
 use Catalyst::Exception;
+use aliased 'MetaCPAN::Contest::Vote::Votes';
 use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
@@ -60,6 +61,10 @@ __PACKAGE__->config(
 
     'Model::Authentication' => {
         contributors_file => 'data/contributors.json',
+    },
+
+    'Controller::Vote' => {
+        vote_storage => Votes->new({ vote_storage => 'votes/' }),
     },
 
     name => 'MetaCPAN::Contest::Vote',
