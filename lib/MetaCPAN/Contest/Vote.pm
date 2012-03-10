@@ -42,6 +42,8 @@ our $VERSION = '0.01';
 # with an external configuration file acting as an override for
 # local deployment.
 
+my $votes = Votes->new({ vote_storage => 'votes/' });
+
 __PACKAGE__->config(
     default_view => 'HTML',
 
@@ -64,7 +66,11 @@ __PACKAGE__->config(
     },
 
     'Controller::Vote' => {
-        vote_storage => Votes->new({ vote_storage => 'votes/' }),
+        vote_storage => $votes,
+    },
+
+    'Controller::Entries' => {
+        vote_storage => $votes,
     },
 
     name => 'MetaCPAN::Contest::Vote',

@@ -5,6 +5,13 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
+has vote_storage => (
+    is       => 'ro',
+    required => 1,
+    isa      => 'MetaCPAN::Contest::Vote::Votes',
+    handles  => ['has_voted'],
+);
+
 =head1 NAME
 
 MetaCPAN::Contest::Vote::Controller::Entries - Catalyst Controller
@@ -23,7 +30,10 @@ Catalyst Controller.
 
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
-    $c->stash->{entries} = $c->model('Entries')->list;
+    $c->stash(
+        entries   => $c->model('Entries')->list,
+        can_vote  => $c->user_exists && !$self->has_voted($c->user->{github_user}),
+    );
 }
 
 =head1 AUTHOR

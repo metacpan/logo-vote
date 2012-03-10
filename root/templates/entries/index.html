@@ -22,6 +22,7 @@
       </li>
       <li>Rank the list of logos according to your preferences and click
       the <strong>Vote</strong> button at the end of the page.
+        <% IF c.user_exists && !can_vote %><span class="mark">&#x2713;</span><% END %>
         <ul>
           <li>A preference is specified as a positive integer</li>
           <li>A smaller number indicates a higher preference</li>
@@ -88,7 +89,7 @@ $(function () {
 <% FOREACH entry IN entries %>
 <% SET id = loop.index %>
   <h2>
-    <% IF c.user_exists %>
+    <% IF can_vote %>
     <input type="text" class="title-vote" id="not-votes.<% id %>.score"
            name="not-votes.<% id %>.score" value="" />
     <% END %>
@@ -107,7 +108,7 @@ $(function () {
   </div>
 <% END %>
 
-<% IF c.user_exists %>
+<% IF can_vote %>
 <h2>Cast your vote!</h2>
   <div class="entry votepoll">
 
