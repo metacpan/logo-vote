@@ -148,7 +148,7 @@ sub list {
         next unless @images;
         push @result,
             {
-            images => [ sort { $a->{height} <=> $b->{height} } @images ],
+            images => [ sort { ($a->{height} || 0) <=> ($b->{height} || 0) } @images ],
             link  => $entry->link,
             title => $entry->title,
             };
