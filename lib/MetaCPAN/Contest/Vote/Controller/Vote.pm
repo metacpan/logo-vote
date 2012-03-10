@@ -66,7 +66,10 @@ sub index : Chained('/authentication') PathPart('vote') Args(0) {
 sub voting_failure : Action {
     my ($self, $ctx, $reason) = @_;
 
-    $ctx->stash(reason => $reason);
+    $ctx->stash(
+        reason   => $reason,
+        template => 'vote/error.html',
+    );
     $ctx->response->status(400);
 }
 
