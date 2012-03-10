@@ -5,6 +5,7 @@ use MooseX::Types::Path::Class;
 use File::Slurp;
 use FindBin;
 use JSON;
+use Encode;
 use Pithub;
 use namespace::autoclean;
 
@@ -147,7 +148,7 @@ sub store {
     my $data   = $self->fetch;
     my $json   = $self->_encode($data);
     my $file   = $self->_file->stringify;
-    write_file $file, $json;
+    write_file $file, encode 'utf8', $json;
 }
 
 __PACKAGE__->meta->make_immutable;
