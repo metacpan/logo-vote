@@ -1,0 +1,382 @@
+#! /usr/bin/env python
+# debian-vote - implement the voting mechanism from the Debian constitution
+#
+# Copyright 2004  Jochen Voss <voss@seehuhn.de>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+import sys, fileinput, re
+from copy import copy
+from optparse import OptionParser
+
+
+######################################################################
+# The quotes are from appendix A.6 of the Debian constitution
+
+######################################################################
+# 1. Each voter's ballot ranks the options being voted on. Not
+#    all options need be ranked. Ranked options are considered
+#    preferred to all unranked options. Voters may rank options
+#    equally. Unranked options are considered to be ranked
+#    equally with one another. Details of how ballots may be
+#    filled out will be included in the Call For Votes.
+
+class BallotError(Exception):
+    def __init__ (self, msg):
+        self.msg = msg
+    def __str__ (self):
+        return  self.msg
+
+
+def is_prefered(x, y):
+    "Decode the ranking characters from the votes."
+    if x=="-": return False
+    if y=="-": return True
+    return x<y
+
+
+class OptionSet:
+    def __init__(self):
+        self.options = []
+        self.prefs = {}
+
+    def __iter__(self):
+        return iter(self.options)
+
+    def __getitem__(self, i):
+        return self.options[i]
+
+    def __len__(self):
+        return len(self.options)
+
+    def set_options(self, opts):
+        self.options = opts
+
+    def initialise(self, n):
+        "Initialise the data structures to store the individual votes."
+        if n<2: raise BallotError("not enough options")
+        #if n>9: raise BallotError("too many options")
+        self.options[:] = range(0,n)
+        #self.options.append('X')
+        for o1 in self.options:
+            for o2 in self.options:
+                self.prefs[str(o1) + "|" + str(o2)] = 0
+
+    def register_vote(self, vote):
+        """Feed a single vote into the data structures.
+        'vote' must be a string with one letter for each option.  Each
+        letter should either be a digit (the rank for this option)
+        or the character '-' (to place the option after all ranked
+        options).
+        """
+        if not self.options:
+            self.initialise(len(vote))
+        elif len(vote) != len(self):
+            msg="option count mismatch (%d vs. %d)"%(len(vote),len(self))
+            raise BallotError(msg)
+        for i in range(len(self)):
+            for j in range(len(self)):
+                if is_prefered(vote[i], vote[j]):
+                    self.prefs[str(self[i])+"|"+str(self[j])] += 1
+
+
+    def print_propositions(self):
+        """Print the vote counts in tabular form.
+        """
+        print
+        print "    ",
+        for o2 in self:
+            print " %3s"%o2,
+        print
+        for o1 in self:
+            print "%4s"%o1,
+            for o2 in self:
+                if o1==o2:
+                    print "   -",
+                else:
+                    print " %3d" % self.prefs[str(o1)+"|"+str(o2)],
+            print
+
+
+    def matches_quorum(self, o, quorum):
+        ######################################################################
+        # 2. If the ballot has a quorum requirement R any options other
+        #    than the default option which do not receive at least R
+        #    votes ranking that option above the default option are
+        #    dropped from consideration.
+        return self.prefs[o+'X'] >= quorum
+
+
+    def check_quorum(self, quorum):
+        print ""
+        print "quorum requirement: R=%f" % quorum
+        active = []
+        for o in self:
+            if o == 'X' or self.matches_quorum(o, quorum):
+                active.append(o)
+            else:
+                print ("option %s does not match "%o
+                       + "the quorum requirement (%d)"% quorum
+                       + " -> eliminated")
+        if len(self) == len(active):
+            print "all options passed quorum"
+        else:
+            self.set_options(active)
+
+    def defeats(self, a, b):
+        """Return True of 'a' defeats 'b'
+        """
+        return self.prefs[str(a)+"|"+str(b)] > self.prefs[str(b)+"|"+str(a)]
+
+
+    def write_dot(self, dotfile):
+        f=open(dotfile,"w")
+        f.write('digraph "vote graph" {\n')
+        f.write('  size="8.27,11.69";\n')
+        f.write('  margin=0.6;\n')
+        for o1 in self:
+            for o2 in self:
+                if o1>=o2: continue
+                if self.prefs[o1+o2]==0 and self.prefs[o2+o1]==0: continue
+                if self.defeats(o1, o2):
+                    l=(o1,o2,self.prefs[o1+o2],self.prefs[o2+o1])
+                else:
+                    l=(o2,o1,self.prefs[o2+o1],self.prefs[o1+o2])
+                f.write('  "%s" -> "%s" [label="%d:%d"];\n'%l)
+        f.write('}\n')
+        f.close()
+
+
+def drop_options(options, opts_supermajority, supermajority_flag):
+    ######################################################################
+    # 3. Any (non-default) option which does not defeat the default
+    #    option by its required majority ratio is dropped from
+    #    consideration.
+    #     1. Given two options A and B, V(A,B) is the number of
+    #        voters who prefer option A over option B.
+    #     2. An option A defeats the default option D by a majority
+    #        ratio N, if V(A,D) is strictly greater than N * V(D,A).
+    #     3. If a supermajority of S:1 is required for A, its
+    #        majority ratio is S; otherwise, its majority ratio is 1.
+
+    supermajority={}
+    for o in opts_supermajority:
+        supermajority[o]=3
+
+    def majority_ratio(o):
+        if o in supermajority:
+            return supermajority[o]
+        else:
+            return 1
+
+#    def matches_supermajority(o):
+#        return options.prefs[o+'X']>majority_ratio(o)*options.prefs['X'+o]
+
+    if supermajority_flag and opts_supermajority:
+        print ""
+        str=", ".join(opts_supermajority[0:-1])+" and "+opts_supermajority[-1]
+        print "using 3:1 supermajority for options %s"%str
+        ropts=[x for x in options if x not in opts_supermajority]
+        if ropts:
+            str=", ".join(ropts[0:-1])+" and "+ropts[-1]
+            print "using 1:1 supermajority for options %s"%str
+        active=[]
+        for o in options:
+            if matches_supermajority(o):
+                active.append(o)
+            else:
+                print ("option %s eliminated (fails "%o
+                       + "the supermajority requirement %d:1)"%majority_ratio(o))
+
+        if len(options) == len(active):
+            print "all options passed the supermajority requirement"
+        else:
+            options.set_options(active)
+
+
+def compute_defeats(options):
+    ######################################################################
+    # 4. From the list of undropped options, we generate a list of
+    #    pairwise defeats.
+    #     1. An option A defeats an option B, if V(A,B) is strictly
+    #        greater than V(B,A).
+
+    while True:
+        ######################################################################
+        # 5. From the list of [undropped] pairwise defeats, we generate a
+        #    set of transitive defeats.
+        #     1. An option A transitively defeats an option C if A
+        #        defeats C or if there is some other option B where A
+        #        defeats B AND B transitively defeats C.
+
+        transitive_defeats=[]
+        for o1 in options:
+            for o2 in options:
+                if options.defeats(o1, o2):
+                    transitive_defeats.append(str(o1)+"|"+str(o2))
+        for i in options:
+            for j in options:
+                for k in options:
+                    if (str(j)+"|"+str(i) in transitive_defeats
+                        and str(i)+"|"+str(k) in transitive_defeats
+                        and not str(j)+"|"+str(k) in transitive_defeats):
+                        transitive_defeats.append(str(j)+"|"+str(k))
+
+        ######################################################################
+        # 6. We construct the Schwartz set from the set of transitive
+        #    defeats.
+        #     1. An option A is in the Schwartz set if for all options B,
+        #        either A transitively defeats B, or B does not
+        #        transitively defeat A.
+
+        def is_not_in_schwartz_set(A):
+            """Check whether the option is in the Schwartz set.
+            Return a reason if this is not the case, and
+            return None if the option is in the Schwartz set."""
+            for B in options:
+                if not ((str(A)+"|"+str(B) in transitive_defeats)
+                        or (str(B)+"|"+str(A) not in transitive_defeats)):
+                    return "%s beats %s but %s does not beat %s"%(B,A,A,B)
+            return None
+
+        print ""
+        active=[]
+        for o in options:
+            strn=is_not_in_schwartz_set(o)
+            if strn:
+                print "option %s eliminated (%s)"%(o,strn)
+            else:
+                active.append(o)
+        options.set_options(active)
+        print "the Schwartz set is { "+", ".join(map(lambda x: str(x), options))+" }"
+
+        ######################################################################
+        # 7. If there are defeats between options in the Schwartz set, we
+        #    drop the weakest such defeats from the list of pairwise
+        #    defeats, and return to step 5.
+        #     1. A defeat (A,X) is weaker than a defeat (B,Y) if V(A,X)
+        #        is less than V(B,Y). Also, (A,X) is weaker than (B,Y) if
+        #        V(A,X) is equal to V(B,Y) and V(X,A) is greater than V
+        #        (Y,B).
+        #     2. A weakest defeat is a defeat that has no other defeat
+        #        weaker than it. There may be more than one such defeat.
+
+        def is_weaker_defeat(dx,dy):
+            A,X=dx.split("|")
+            B,Y=dy.split("|")
+            assert options.defeats(A, X)
+            assert options.defeats(B, Y)
+            if options.prefs[str(A)+"|"+str(X)] < options.prefs[str(B)+"|"+str(Y)]:
+                return True
+            if (options.prefs[str(A)+"|"+str(X)] == options.prefs[str(B)+"|"+str(Y)]
+                and options.prefs[str(X)+"|"+str(A)] > options.prefs[str(Y)+"|"+str(B)]):
+                return True
+
+        plist=[]
+        for o1 in options:
+            for o2 in options:
+                if options.defeats(o1, o2):
+                    plist.append(str(o1)+"|"+str(o2))
+        if not plist:
+            break
+
+        def ccmp(dx,dy):
+            if is_weaker_defeat(dx,dy): return -1
+            if is_weaker_defeat(dy,dx): return +1
+            return 0
+        plist.sort(ccmp)
+        for dx in plist:
+            o1,o2=dx.split("|")
+            print dx, options.prefs[str(o1)+"|"+str(o2)], options.prefs[str(o2)+"|"+str(o1)]
+        weakest_defeat=plist[0]
+
+        o1,o2=weakest_defeat.split("|")
+        options.prefs[str(o1)+"|"+str(o2)]=0
+        options.prefs[str(o2)+"|"+str(o1)]=0
+
+
+def print_result(options):
+    ######################################################################
+    # 8. If there are no defeats within the Schwartz set, then the
+    #    winner is chosen from the options in the Schwartz set. If
+    #    there is only one such option, it is the winner. If there
+    #    are multiple options, the elector with the casting vote
+    #    chooses which of those options wins.
+    print ""
+    if len(options)>1:
+        print "result: tie between options "+", ".join(map(lambda x: str(x), options))
+    else:
+        print "result: option "+str(options[0])+" wins"
+
+
+def main():
+    parser=OptionParser("usage: %prog [options] tally")
+    parser.remove_option("-h")
+    parser.add_option("-h","--help",action="store_true",dest="help_flag",
+                      help="show this message")
+    parser.add_option("-d","--dotfile",action="store",type="string",dest="dotfile",
+                      help="store the vote graph in DOTFILE",
+                      metavar="DOTFILE")
+    parser.add_option("-p","--plain",action="store_false",
+                      dest="supermajority_flag", default=True,
+                      help="do not consider supermajority requirements")
+    parser.add_option("-q","--quorum",action="store",type="float",dest="quorum",
+                      help="set a quorum requirement of R", default=0.0,
+                      metavar="R")
+    parser.add_option("-s","--supermajority",action="store",type="string",
+                      dest="supermajority", default="",
+                      help="use 3:1 supermajority for option letters OPTS",
+                      metavar="OPTS")
+    parser.add_option("-V","--version",action="store_true",dest="version_flag",
+                      help="show version information")
+    (opts,args)=parser.parse_args()
+    sys.argv=sys.argv[0:1]+args
+
+    if opts.help_flag:
+        parser.print_help()
+        print ""
+        print "Please report bugs to <voss@seehuhn.de>."
+        sys.exit(0)
+    if opts.version_flag:
+        print """debian-vote 0.8
+    Copyright (C) 2004, 2005, 2008 Jochen Voss <voss@seehuhn.de>
+    Debian-vote comes with ABSOLUTELY NO WARRANTY, to the extent
+    permitted by law.  You may redistribute copies of debian-vote under
+    the terms of the GNU General Public License.  For more
+    information about these matters, see the file named COPYING."""
+        sys.exit(0)
+
+    options = OptionSet()
+
+    ## Read the votes, either from stdin or from file.
+    vote_pattern=re.compile(r"^V:\s+(\S+)(\s+\S+)*$")
+    for line in fileinput.input():
+        m=vote_pattern.match(line)
+        if not m:
+            continue
+        options.register_vote(m.group(1).split("|"))
+
+    if opts.dotfile:
+        options.write_dot(opts.dotfile)
+    options.print_propositions()
+    if opts.quorum:
+        options.check_quorum(opts.quorum)
+    drop_options(options, opts.supermajority, opts.supermajority_flag)
+    compute_defeats(options)
+    print_result(options)
+
+
+if __name__ == '__main__':
+    main()
