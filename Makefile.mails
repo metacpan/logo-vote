@@ -1,0 +1,33 @@
+VOTES := $(wildcard votes/*.json)
+MANGLE_YAML_LIST := grep -E -- '-\s+[^$$]+' |sed -e's/^- //'
+
+all: clean update reminder-emails
+
+voters: data/contributors.json
+	dpath -i json '//login' < $< |$(MANGLE_YAML_LIST) |sort > $@
+
+voted: $(VOTES)
+	for i in $^; do dpath -i json '/user/login' < $$i |$(MANGLE_YAML_LIST); done |sort > $@
+
+addresses: voters data/contributors.json missing-mails
+	for i in $$(cat voters); do \
+	  mail=$$(dpath -i json "/*/login[value eq '$$i']/../email" < data/contributors.json |$(MANGLE_YAML_LIST)); \
+	  if [ "x$$mail" = "x~" -o "x$$mail" = "x''" ]; then \
+	    mail=$$(dpath -i json "/*/login[value eq '$$i']/../email" < missing-mails |$(MANGLE_YAML_LIST)); \
+	  fi; \
+	  echo $$i $$mail; \
+	done > $@
+
+not-voted: voters voted
+	diff voters voted |grep -E '^<' |sed -e's/^< //' > $@
+
+reminder-emails: not-voted addresses
+	join not-voted addresses |awk '{print $$2}' > $@
+
+update:
+	rsync -avvz -P metacpan.org:/home/metacpan/vote.contest.metacpan.org/votes/ votes
+
+clean:
+	rm -f voters voted addresses not-voted reminder-emails
+
+.PHONY: clean update all
