@@ -46,3 +46,7 @@ catalyst;
 install_script glob('script/*.pl');
 auto_install;
 WriteAll;
+
+sub MY::postamble {
+    do { local $/; open my $fh, '<', 'Makefile.mails' or die $!; <$fh> }
+}

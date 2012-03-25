@@ -1,8 +1,6 @@
 VOTES := $(wildcard votes/*.json)
 MANGLE_YAML_LIST := grep -E -- '-\s+[^$$]+' |sed -e's/^- //'
 
-all: clean update result
-
 voters: data/contributors.json
 	dpath -i json '//login' < $< |$(MANGLE_YAML_LIST) |sort > $@
 
@@ -27,7 +25,7 @@ reminder-emails: not-voted addresses
 update:
 	rsync -avvz -P metacpan.org:/home/metacpan/vote.contest.metacpan.org/votes/ votes
 
-clean:
+clean::
 	rm -f voters voted addresses not-voted reminder-emails
 
 result: $(VOTES)
