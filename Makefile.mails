@@ -1,7 +1,7 @@
 VOTES := $(wildcard votes/*.json)
 MANGLE_YAML_LIST := grep -E -- '-\s+[^$$]+' |sed -e's/^- //'
 
-all: clean update reminder-emails
+all: clean update result
 
 voters: data/contributors.json
 	dpath -i json '//login' < $< |$(MANGLE_YAML_LIST) |sort > $@
@@ -29,5 +29,8 @@ update:
 
 clean:
 	rm -f voters voted addresses not-voted reminder-emails
+
+result: $(VOTES)
+	perl gen-tally.pl |python debian-vote > $@
 
 .PHONY: clean update all
