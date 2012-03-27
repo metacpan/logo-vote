@@ -130,7 +130,7 @@ $(function () {
     <input type="text" class="title-vote" id="not-votes.<% id %>.score"
            name="not-votes.<% id %>.score" value="" />
     <% END %>
-    <% entry.title %>
+    <a name="entry_<% id %>"> <% entry.title %></a>
     <div style="clear: both"></div>
   </h2>
   <div class="entry">
@@ -160,7 +160,7 @@ $(function () {
         <input type="hidden" name="votes.<% id %>.name" value="<% entry.link %>" />
         <input type="hidden" name="votes.<% id %>.id" value="<% id %>" />
         <input type="text" class="vote" id="votes.<% id %>.score" name="votes.<% id %>.score" value="" />
-        <label for="votes.<% id %>.score"><% entry.title %></label>
+        <label for="votes.<% id %>.score"><a href="#entry_<% id %>"><% entry.title %></a></label>
       </div>
       <% END %>
 
