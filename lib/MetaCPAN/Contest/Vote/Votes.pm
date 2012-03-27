@@ -16,7 +16,7 @@ has vote_storage => (
 
 sub BUILD {
     my ($self) = @_;
-    confess "storage directory isn't writable"
+    confess "storage directory '@{[ $self->vote_storage ]}' isn't writable"
         unless -w $self->vote_storage;
 }
 

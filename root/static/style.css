@@ -294,6 +294,9 @@ div.authentication_error a, div.authentication_error a:visited {
     font-family: 'Arvo';
     font-size:1.5em;
 }
+.vote-entry label a {
+    color: #424951;
+}
 
 #vote input[type="submit"] {
     font-family: 'Arvo';
